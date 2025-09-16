@@ -1,7 +1,7 @@
 resource "random_string" "acr_suffix" {
   length  = 6
   upper   = false
-  number  = true
+  numeric = true
   special = false
 }
 
