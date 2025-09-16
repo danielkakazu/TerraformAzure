@@ -1,2 +1,2 @@
 app_name = "example"
-location = "westeurope"
+location = "centralus"
