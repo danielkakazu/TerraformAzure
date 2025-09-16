@@ -20,7 +20,7 @@ Infraestrutura completa para rodar Apache Airflow em produção no AKS, usando T
    cd terraform-airflow-aks
    ```
 
-2. Configure variáveis de ambiente do Service Principal se necessário:
+2. Exporte as credenciais do service principal (se não estiverem configuradas no ambiente):
    ```bash
    export ARM_SUBSCRIPTION_ID=xxxx
    export ARM_TENANT_ID=xxxx
@@ -33,13 +33,14 @@ Infraestrutura completa para rodar Apache Airflow em produção no AKS, usando T
    terraform init
    ```
 
-4. Planeje e aplique:
+4. Planeje a execução:
    ```bash
    terraform plan -out=tfplan
+   ```
+
+5. Aplique a infraestrutura:
+   ```bash
    terraform apply tfplan
    ```
 
-## Observações
-- Ajuste variáveis em `variables.tf`.
-- State remoto configurado em `backend.tf` (Azure Storage).
-- Imagens do Airflow devem ser importadas para o ACR manualmente.
+> Observação: todos os recursos `.tf` na raiz são carregados automaticamente pelo Terraform.

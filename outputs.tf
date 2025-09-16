@@ -7,6 +7,6 @@ output "key_vault_uri" {
 }
 
 output "aks_oidc_issuer" {
-  value = azurerm_kubernetes_cluster.aks.oidc_issuer_profile[0].issuer_url
+  value       = azurerm_kubernetes_cluster.aks.oidc_issuer_profile[0].issuer_url
   description = "OIDC issuer URL (useful para federated credentials)"
 }
