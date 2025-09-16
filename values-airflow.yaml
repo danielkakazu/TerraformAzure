@@ -1,0 +1,19 @@
+images:
+  airflow:
+    repository: "${azurerm_container_registry.acr.login_server}/airflow"
+    tag: "${var.airflow_image_tag}"
+
+airflow:
+  fernetKey: "REPLACE_WITH_STRONG_KEY"
+  webserver:
+    defaultUser:
+      enabled: false
+
+logs:
+  remoteLogging: true
+  remoteLogConnId: "azure_blob"
+
+connections:
+  azure_blob:
+    type: "wasb"
+    extra: "{\"account_name\": \"REPLACE_WITH_STORAGE_ACCOUNT\", \"container\": \"airflow-logs\"}"
