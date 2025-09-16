@@ -1,2 +1,2 @@
-app_name = "example"
-location = "westeurope"
+app_name = "exemple-airflow"
+location = "centralus"
