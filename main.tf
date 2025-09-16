@@ -1,4 +1,3 @@
-# entrypoint - includes resources via modules or direct file includes
-module "rg" {
-  source = "./resource_group.tf"
-}
+# main.tf
+# Ponto de entrada do Terraform — os .tf na raiz já são carregados automaticamente.
+
