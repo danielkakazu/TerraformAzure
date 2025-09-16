@@ -8,11 +8,6 @@ variable "rg_name" {
   default = "airflow-rg"
 }
 
-variable "acr_name" {
-  type    = string
-  default = "airflowacr${random_string.acr_suffix.result}"
-}
-
 variable "cluster_name" {
   type    = string
   default = "airflow-aks"
