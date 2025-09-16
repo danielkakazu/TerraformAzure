@@ -8,7 +8,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     name                = "npdefault"
     node_count          = var.node_count
     vm_size             = var.node_vm_size
-    availability_zones  = ["1","2","3"]
   }
 
   identity {
