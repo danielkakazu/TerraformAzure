@@ -7,10 +7,10 @@ Infraestrutura completa para rodar Apache Airflow em produção no AKS, usando T
 - ACR
 - Storage Account
 - Key Vault
-- AKS (OIDC)
+- AKS (OIDC + AAD RBAC)
 - User Assigned Identity
 - Role Assignments
-- Helm release (opcional)
+- Helm release (Airflow)
 - PostgreSQL Flexible Server (template)
 
 ## Como usar
@@ -20,7 +20,7 @@ Infraestrutura completa para rodar Apache Airflow em produção no AKS, usando T
    cd terraform-airflow-aks
    ```
 
-2. Exporte as credenciais do service principal (se não estiverem configuradas no ambiente):
+2. Exporte as credenciais do service principal:
    ```bash
    export ARM_SUBSCRIPTION_ID=xxxx
    export ARM_TENANT_ID=xxxx
@@ -42,5 +42,3 @@ Infraestrutura completa para rodar Apache Airflow em produção no AKS, usando T
    ```bash
    terraform apply tfplan
    ```
-
-> Observação: todos os recursos `.tf` na raiz são carregados automaticamente pelo Terraform.

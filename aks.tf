@@ -1,6 +1,3 @@
-# Declare o data block fora do recurso
-data "azurerm_client_config" "current" {}
-
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.cluster_name
   location            = azurerm_resource_group.rg.location
@@ -20,7 +17,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   azure_active_directory_role_based_access_control {
     azure_rbac_enabled     = true
     tenant_id              = data.azurerm_client_config.current.tenant_id
-    admin_group_object_ids = []  # opcional, ou IDs de grupos de admin
+    admin_group_object_ids = []
   }
 
   oidc_issuer_enabled = true

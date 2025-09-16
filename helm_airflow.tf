@@ -6,12 +6,12 @@ provider "kubernetes" {
 }
 
 resource "helm_release" "airflow" {
-  name       = "apache-airflow"
-  repository = "https://airflow.apache.org"
-  chart      = "airflow"
-  namespace  = "airflow"
+  name            = "apache-airflow"
+  repository      = "https://airflow.apache.org"
+  chart           = "airflow"
+  namespace       = "airflow"
   create_namespace = true
 
-  values = [file("${path.module}/values-airflow.yaml")]
-  depends_on = [azurerm_kubernetes_cluster.aks]
+  values      = [file("${path.module}/values-airflow.yaml")]
+  depends_on  = [azurerm_kubernetes_cluster.aks]
 }

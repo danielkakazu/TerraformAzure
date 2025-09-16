@@ -1,5 +1,3 @@
-data "azurerm_client_config" "current" {}
-
 resource "azurerm_key_vault" "kv" {
   name                = "airflow-kv-${random_string.acr_suffix.result}"
   resource_group_name = azurerm_resource_group.rg.name
