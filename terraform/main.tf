@@ -59,7 +59,7 @@ resource "azurerm_role_assignment" "main" {
 # Blob storage for Airflow logs
 
 resource "azurerm_storage_account" "airflow" {
-  name                     = "${var.app_name}airflowsa"
+  name                     = "${var.app_name}airflowsa${random_string.suffix.result}"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = var.location
   account_tier             = "Standard"
