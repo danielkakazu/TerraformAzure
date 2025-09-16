@@ -1,13 +1,12 @@
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "kv" {
-  name                        = "airflow-kv-${random_string.acr_suffix.result}"
-  resource_group_name         = azurerm_resource_group.rg.name
-  location                    = azurerm_resource_group.rg.location
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  sku_name                    = "standard"
-  soft_delete_enabled         = true
-  purge_protection_enabled    = false
+  name                = "airflow-kv-${random_string.acr_suffix.result}"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  sku_name            = "standard"
+  purge_protection_enabled = false
 }
 
 resource "azurerm_key_vault_secret" "storage_account_key" {

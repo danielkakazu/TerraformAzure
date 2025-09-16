@@ -11,7 +11,7 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
   administrator_login    = var.postgres_admin_user
   administrator_password = random_password.postgres_password.result
   version                = "14"
-  sku_name               = "Standard_B2ms"
+  sku_name               = "B_Standard_B2ms"
   storage_mb             = 32768
   backup_retention_days  = 7
   geo_redundant_backup_enabled = false

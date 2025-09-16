@@ -5,9 +5,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   dns_prefix          = "airflowaks"
 
   default_node_pool {
-    name                = "npdefault"
-    node_count          = var.node_count
-    vm_size             = var.node_vm_size
+    name       = "npdefault"
+    node_count = var.node_count
+    vm_size    = var.node_vm_size
   }
 
   identity {
@@ -15,7 +15,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   azure_active_directory_role_based_access_control {
-    managed = true
+    azure_rbac_enabled = true
   }
 
   oidc_issuer_enabled = true
