@@ -1,16 +1,8 @@
-# Gera um sufixo aleatório de 6 caracteres
-resource "random_string" "suffix" {
-  length  = 6
-  upper   = false
-  numeric = true
-  special = false
-}
-
 terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=3.70.0"
+      version = "~> 4.7"
     }
   }
 }
@@ -20,13 +12,21 @@ provider "azurerm" {
   skip_provider_registration = true
 }
 
+# Gera um sufixo aleatório de 6 caracteres
+resource "random_string" "suffix" {
+  length  = 6
+  upper   = false
+  numeric = true
+  special = false
+}
+
+# Resource Group
 resource "azurerm_resource_group" "rg" {
   name     = "${var.app_name}rg"
   location = var.location
 }
 
 # Azure Kubernetes Cluster
-
 resource "azurerm_kubernetes_cluster" "main" {
   name                = "${var.app_name}aks"
   location            = var.location
@@ -49,7 +49,6 @@ resource "azurerm_kubernetes_cluster" "main" {
 }
 
 # Azure Container Registry
-
 resource "azurerm_container_registry" "acr" {
   name                = "${var.app_name}acr${random_string.suffix.result}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -58,14 +57,14 @@ resource "azurerm_container_registry" "acr" {
   admin_enabled       = true
 }
 
+# Role Assignment para o AKS puxar imagens do ACR
 resource "azurerm_role_assignment" "main" {
-  principal_id         = azurerm_kubernetes_cluster.main.kubelet_identity[0].object_id
+  principal_id         = azurerm_kubernetes_cluster.main.identity[0].principal_id
   role_definition_name = "AcrPull"
   scope                = azurerm_container_registry.acr.id
 }
 
-# Blob storage for Airflow logs
-
+# Blob storage para logs do Airflow
 resource "azurerm_storage_account" "airflow" {
   name                     = "${var.app_name}airflowsa${random_string.suffix.result}"
   resource_group_name      = azurerm_resource_group.rg.name
