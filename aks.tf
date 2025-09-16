@@ -14,9 +14,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
     type = "SystemAssigned"
   }
 
-  azure_active_directory_role_based_access_control {
-    azure_rbac_enabled = true
-  }
+data "azurerm_client_config" "current" {}
+
+azure_active_directory_role_based_access_control {
+  azure_rbac_enabled      = true
+  tenant_id               = data.azurerm_client_config.current.tenant_id
+  admin_group_object_ids  = [] # opcional, lista de grupos de admins se quiser limitar
+}
+
 
   oidc_issuer_enabled = true
 
