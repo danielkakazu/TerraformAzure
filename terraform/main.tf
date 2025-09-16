@@ -9,9 +9,8 @@ terraform {
 
 provider "azurerm" {
   features {}
-  skip_provider_registration = true
+  resource_provider_registrations = "none"
 }
-
 # Gera um sufixo aleatório de 6 caracteres
 resource "random_string" "suffix" {
   length  = 6
@@ -75,7 +74,7 @@ resource "azurerm_storage_account" "airflow" {
 
 resource "azurerm_storage_container" "airflow_logs" {
   name                  = "airflow-logs"
-  storage_account_name  = azurerm_storage_account.airflow.name
+  storage_account_id    = azurerm_storage_account.airflow.id
   container_access_type = "private"
 }
 
