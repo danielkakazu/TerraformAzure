@@ -1,3 +1,11 @@
+# Gera um sufixo aleatório de 6 caracteres
+resource "random_string" "suffix" {
+  length  = 6
+  upper   = false
+  numeric = true
+  special = false
+}
+
 terraform {
   required_providers {
     azurerm = {
@@ -9,6 +17,7 @@ terraform {
 
 provider "azurerm" {
   features {}
+  skip_provider_registration = true
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -42,7 +51,7 @@ resource "azurerm_kubernetes_cluster" "main" {
 # Azure Container Registry
 
 resource "azurerm_container_registry" "acr" {
-  name                = "${var.app_name}acr"
+  name                = "${var.app_name}acr${random_string.suffix.result}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = var.location
   sku                 = "Standard"
@@ -58,7 +67,7 @@ resource "azurerm_role_assignment" "main" {
 # Blob storage for Airflow logs
 
 resource "azurerm_storage_account" "airflow" {
-  name                     = "${var.app_name}airflowsa"
+  name                     = "${var.app_name}airflowsa${random_string.suffix.result}"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = var.location
   account_tier             = "Standard"
