@@ -4,6 +4,18 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.7"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.7"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.23"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.9"
+    }
   }
 }
 
@@ -11,7 +23,26 @@ provider "azurerm" {
   features {}
   resource_provider_registrations = "none"
 }
-# Gera um sufixo aleatório de 6 caracteres
+
+provider "kubernetes" {
+  host                   = azurerm_kubernetes_cluster.main.kube_config[0].host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.main.kube_config[0].client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.main.kube_config[0].client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.main.kube_config[0].cluster_ca_certificate)
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = azurerm_kubernetes_cluster.main.kube_config[0].host
+    client_certificate     = base64decode(azurerm_kubernetes_cluster.main.kube_config[0].client_certificate)
+    client_key             = base64decode(azurerm_kubernetes_cluster.main.kube_config[0].client_key)
+    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.main.kube_config[0].cluster_ca_certificate)
+  }
+}
+
+# ======================================================
+# Sufixo aleatório
+# ======================================================
 resource "random_string" "suffix" {
   length  = 6
   upper   = false
@@ -19,13 +50,17 @@ resource "random_string" "suffix" {
   special = false
 }
 
+# ======================================================
 # Resource Group
+# ======================================================
 resource "azurerm_resource_group" "rg" {
   name     = "${var.app_name}rg"
   location = var.location
 }
 
+# ======================================================
 # Azure Kubernetes Cluster
+# ======================================================
 resource "azurerm_kubernetes_cluster" "main" {
   name                = "${var.app_name}aks"
   location            = var.location
@@ -47,7 +82,9 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 }
 
+# ======================================================
 # Azure Container Registry
+# ======================================================
 resource "azurerm_container_registry" "acr" {
   name                = "${var.app_name}acr${random_string.suffix.result}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -63,7 +100,9 @@ resource "azurerm_role_assignment" "main" {
   scope                = azurerm_container_registry.acr.id
 }
 
-# Blob storage para logs do Airflow
+# ======================================================
+# Storage para logs do Airflow
+# ======================================================
 resource "azurerm_storage_account" "airflow" {
   name                     = "${var.app_name}airflowsa${random_string.suffix.result}"
   resource_group_name      = azurerm_resource_group.rg.name
@@ -94,4 +133,34 @@ resource "azurerm_storage_management_policy" "prune_logs" {
       }
     }
   }
+}
+
+# ======================================================
+# Namespace do Airflow
+# ======================================================
+resource "kubernetes_namespace" "airflow" {
+  metadata {
+    name = "airflow"
+  }
+}
+
+# ======================================================
+# Helm Release Airflow
+# ======================================================
+resource "helm_release" "airflow" {
+  name             = "airflow"
+  repository       = "https://airflow.apache.org"
+  chart            = "airflow"
+  namespace        = kubernetes_namespace.airflow.metadata[0].name
+  create_namespace = true
+  timeout          = 1200
+  wait             = true
+
+  depends_on = [
+    azurerm_kubernetes_cluster.main,
+    kubernetes_namespace.airflow
+  ]
+
+  # Se tiver arquivo values.yaml, use:
+  # values = [file("${path.module}/values.yaml")]
 }
