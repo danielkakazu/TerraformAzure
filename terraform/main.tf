@@ -153,11 +153,8 @@ resource "helm_release" "airflow" {
   chart            = "airflow"
   namespace        = kubernetes_namespace.airflow.metadata[0].name
   create_namespace = true
-<<<<<<< HEAD
   timeout          = 1200
   wait             = true
-=======
->>>>>>> 535a684825eb53c138a36ba0fa7ec85e8628171b
 
   depends_on = [
     azurerm_kubernetes_cluster.main,
